@@ -1,8 +1,8 @@
+import re
+
 ############
 # Part 1   #
 ############
-
-
 class MelonType:
     """A species of melon at a melon farm."""
 
@@ -89,11 +89,33 @@ class Melon:
 
         return self.shape_rating > shape_score and self.color_rating > color_score and self.field != bad_field
 
+def parse_file(filename):
+    """read harst report and parse data to create melon instances
+
+        returns a dict of harvested melons
+    """
+    melon_report = []
+    file = open(filename)
+
+    for line in file:
+        l = re.sub(r'\s#|\sBy', '', line).lower().strip().split(' ')
+        melon = {l[0]: int(l[1]), l[2]: int(l[3]), l[4]: l[5], l[6]: l[7].capitalize(), l[8]: int(l[9])}
+        melon_report.append(melon)
+
+    return melon_report
+
 
 def make_melons(melon_types):
     """Returns a list of Melon objects."""
     melon_codes = make_melon_type_lookup(melon_types)
-    melons = [
+    harvest_list = parse_file('harvest_log.txt')
+    melons = []
+
+    for m in harvest_list:
+        melons.append(
+            Melon(melon_codes[m['type']], m['shape'], m['color'], m['field'], m['harvested']))
+
+    sample_data = [
         Melon(melon_codes['yw'], 8, 7, 2, 'Sheila'),
         Melon(melon_codes['yw'], 3, 4, 2, 'Sheila'),
         Melon(melon_codes['yw'], 9, 8, 3, 'Sheila'),
